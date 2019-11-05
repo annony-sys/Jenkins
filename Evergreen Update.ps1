@@ -29,6 +29,9 @@ $creds = $(New-Object System.Management.Automation.PSCredential ($API, $SecurePa
 #if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force | Import-Module PSWindowsUpdate}
 #if (!(Get-Module -ListAvailable -Name Evergreen)) {Install-Module Evergreen -Force | Import-Module Evergreen}
 
+Write-Verbose "Getting Installed Modules" -Verbose
+Get-InstalledModule
+
 Install-Module -Name Evergreen -Force
 Install-Module -Name PSWindowsUpdate -Force
 
@@ -62,7 +65,7 @@ if( (Get-Service WinDefend| Where-Object {$_.Status -eq "Running"}) )
 
 Write-Verbose "Updating Evergreen Applications" -Verbose
 
-if( (Test-Path -Path "C:\Program Files\Google\Chrome" ) )
+if( (Test-Path -Path "C:\Program Files (x86)\Google\Chrome" ) )
 {
     CD "$env:Settings\Applications\Google\Chrome Enterprise"
     Invoke-Expression -Command ".\Install.ps1"
@@ -71,6 +74,12 @@ if( (Test-Path -Path "C:\Program Files\Google\Chrome" ) )
 if( (Test-Path -Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC" ) )
 {
     CD "$env:Settings\Applications\Adobe\Reader DC"
+    Invoke-Expression -Command ".\Install.ps1"
+}
+
+if( (Test-Path -Path "C:\Program Files\Mozilla Firefox" ) )
+{
+    CD "$env:Settings\Applications\Mozilla\Firefox"
     Invoke-Expression -Command ".\Install.ps1"
 }
 
