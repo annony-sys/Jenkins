@@ -25,11 +25,13 @@ Write-Verbose "Getting Encrypted Password from KeyFile" -Verbose
 $SecurePassword = ((Get-Content $PasswordFile) | ConvertTo-SecureString -Key (Get-Content $KeyFile))
 $creds = $(New-Object System.Management.Automation.PSCredential ($API, $SecurePassword))
 
-if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
-if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force | Import-Module PSWindowsUpdate}
-if (!(Get-Module -ListAvailable -Name Evergreen)) {Install-Module Evergreen -Force | Import-Module Evergreen}
+#if (!(Test-Path -Path "C:\Program Files\PackageManagement\ProviderAssemblies\nuget")) {Find-PackageProvider -Name 'Nuget' -ForceBootstrap -IncludeDependencies}
+#if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force | Import-Module PSWindowsUpdate}
+#if (!(Get-Module -ListAvailable -Name Evergreen)) {Install-Module Evergreen -Force | Import-Module Evergreen}
 
 Update-Module -Name Evergreen -Force
+Import-Module PSWindowsUpdate
+Import-Module Evergreen
 
 Write-Verbose "Downloading Sysinternals" -Verbose
 if( -Not (Test-Path -Path "C:\Windows\System32\autologon.exe" ) )
@@ -136,7 +138,7 @@ $props = @{
     To = $To 
     Subject = "Evergreen Update executed successfully on $env:ComputerName in $(($EndDTM-$StartDTM).TotalMinutes) Minutes"
     SmtpServer = $SMTP
-    Attachments = $Attachment
+    #Attachments = $Attachment
     #Body = Get-Content "C:\PSWindowsUpdate.log" | Out-String
     Credential = $creds
 }
