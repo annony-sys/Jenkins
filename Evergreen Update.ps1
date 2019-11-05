@@ -36,8 +36,8 @@ if( -Not (Test-Path -Path "C:\Windows\System32\autologon.exe" ) )
 {
     $url = "https://live.sysinternals.com/Files/SysinternalsSuite.zip"
     [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "${env:SystemRoot}\Temp\$Product.$InstallerType"
-    Expand-Archive -Path "${env:SystemRoot}\Temp\$Product.$InstallerType" -DestinationPath "${env:SystemRoot}\System32"
+    Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "${env:Temp}\$Product.$InstallerType"
+    Expand-Archive -Path "${env:Temp}\$Product.$InstallerType" -DestinationPath "${env:SystemRoot}\System32"
 }
 
 Write-Verbose "Checking if the Windows Update Service is Running" -Verbose
@@ -81,7 +81,7 @@ if( (Test-Path -Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC" ) )
 
 if( (Test-Path -Path "C:\Program Files\Smart-X\ControlUpAgent" ) )
 {
-    CD "$env:Settings\Applications\ControlUp\Agent"
+    CD "$env:Settings\Applications\Misc\ControlUp"
     Invoke-Expression -Command ".\Install.ps1"
 }
 
@@ -137,7 +137,7 @@ $props = @{
     Subject = "Evergreen Update executed successfully on $env:ComputerName in $(($EndDTM-$StartDTM).TotalMinutes) Minutes"
     SmtpServer = $SMTP
     Attachments = $Attachment
-    Body = Get-Content "C:\PSWindowsUpdate.log" | Out-String
+    #Body = Get-Content "C:\PSWindowsUpdate.log" | Out-String
     Credential = $creds
 }
 
