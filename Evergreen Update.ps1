@@ -38,8 +38,8 @@ if( -Not (Test-Path -Path "C:\Windows\System32\autologon.exe" ) )
 {
     $url = "https://live.sysinternals.com/Files/SysinternalsSuite.zip"
     [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "${env:Temp}\$Product.$InstallerType"
-    Expand-Archive -Path "${env:Temp}\$Product.$InstallerType" -DestinationPath "${env:SystemRoot}\System32"
+    Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "$ENV:WORKSPACE\SysinternalsSuite.zip"
+    Expand-Archive -Path "$ENV:WORKSPACE\SysinternalsSuite.zip" -DestinationPath "${env:SystemRoot}\System32"
 }
 
 Write-Verbose "Checking if the Windows Update Service is Running" -Verbose
@@ -78,24 +78,6 @@ if( (Test-Path -Path "C:\Program Files\Google\Chrome" ) )
 if( (Test-Path -Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC" ) )
 {
     CD "$env:Settings\Applications\Adobe\Reader DC"
-    Invoke-Expression -Command ".\Install.ps1"
-}
-
-if( (Test-Path -Path "C:\Program Files\Smart-X\ControlUpAgent" ) )
-{
-    CD "$env:Settings\Applications\Misc\ControlUp"
-    Invoke-Expression -Command ".\Install.ps1"
-}
-
-if( (Test-Path -Path "C:\Program Files (x86)\Base Image Script Framework (BIS-F)" ) )
-{
-    CD "$env:Settings\Applications\Misc\BISF"
-    Invoke-Expression -Command ".\Install.ps1"
-}
-
-if( (Test-Path -Path "C:\Program Files (x86)\App-V Scheduler" ) )
-{
-    CD "$env:Settings\Applications\Misc\App-V Scheduler"
     Invoke-Expression -Command ".\Install.ps1"
 }
 
