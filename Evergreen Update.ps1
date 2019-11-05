@@ -29,18 +29,11 @@ $creds = $(New-Object System.Management.Automation.PSCredential ($API, $SecurePa
 #if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force | Import-Module PSWindowsUpdate}
 #if (!(Get-Module -ListAvailable -Name Evergreen)) {Install-Module Evergreen -Force | Import-Module Evergreen}
 
-Update-Module -Name Evergreen -Force
-Import-Module PSWindowsUpdate
-Import-Module Evergreen
+Install-Module -Name Evergreen -Force
+Install-Module -Name PSWindowsUpdate -Force
 
-Write-Verbose "Downloading Sysinternals" -Verbose
-if( -Not (Test-Path -Path "C:\Windows\System32\autologon.exe" ) )
-{
-    $url = "https://live.sysinternals.com/Files/SysinternalsSuite.zip"
-    [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile "$ENV:WORKSPACE\SysinternalsSuite.zip"
-    Expand-Archive -Path "$ENV:WORKSPACE\SysinternalsSuite.zip" -DestinationPath "${env:SystemRoot}\System32"
-}
+Import-Module -Name Evergreen
+Import-Module -Name PSWindowsUpdate
 
 Write-Verbose "Checking if the Windows Update Service is Running" -Verbose
 $ServiceName = 'wuauserv'
@@ -80,33 +73,6 @@ if( (Test-Path -Path "C:\Program Files (x86)\Adobe\Acrobat Reader DC" ) )
     CD "$env:Settings\Applications\Adobe\Reader DC"
     Invoke-Expression -Command ".\Install.ps1"
 }
-
-Write-Verbose "Checking if Base Image Script Framework is Installed" -Verbose
-if( (Test-Path -Path "C:\Program Files (x86)\Base Image Script Framework (BIS-F)" ) )
-{
-    Write-Verbose "Creating Random Password for AutoLogon" -Verbose
-    $password = Get-RandomCharacters -length 10 -characters 'abcdefghiklmnoprstuvwxyz'
-    $password += Get-RandomCharacters -length 3 -characters 'ABCDEFGHKLMNOPRSTUVWXYZ'
-    $password += Get-RandomCharacters -length 2 -characters '1234567890'
-    $password += Get-RandomCharacters -length 5 -characters '!§$%&/()=?}][{@#*+'
-    $secpassword = $password | ConvertTo-SecureString -asPlainText -Force
-    Remove-LocalUser -Name Autologon
-    New-LocalUser -Name AutoLogon -Password $secpassword
-    Add-LocalGroupMember -Group "Administrators" -Member "AutoLogon"
-
-    Write-Verbose "Creating AutoLogon with Encrypted Passowrd"
-    Start-Process "C:\Windows\System32\autologon.exe" -ArgumentList "/accepteula",AutoLogon,$env:COMPUTERNAME,$password
-    reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeCaption /t REG_SZ /d " " /f
-    reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v LegalNoticeTest /t REG_SZ /d " " /f
-    reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoLogonCount /t REG_SZ /d 1 /f
-    reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce" /v BISF /t REG_SZ /d "C:\Program Files (x86)\Base Image Script Framework (BIS-F)\PrepareBaseImage.cmd" /f
-    reg add "HKLM\SOFTWARE\Policies\Login Consultants\BISF" /v LIC_BISF_CLI_LS /t REG_SZ /d \\dc-01\BISF /f
-    reg add "HKLM\SOFTWARE\Policies\Login Consultants\BISF" /v LIC_BISF_CLI_SB /t REG_SZ /d NO /f
-    shutdown /r /t 30
-    }
-    Else {
-    }
-
 
 Write-Verbose "Stop logging" -Verbose
 $EndDTM = (Get-Date)
