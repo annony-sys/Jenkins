@@ -29,12 +29,6 @@ $creds = $(New-Object System.Management.Automation.PSCredential ($API, $SecurePa
 #if (!(Get-Module -ListAvailable -Name PSWindowsUpdate)) {Install-Module PSWindowsUpdate -Force | Import-Module PSWindowsUpdate}
 #if (!(Get-Module -ListAvailable -Name Evergreen)) {Install-Module Evergreen -Force | Import-Module Evergreen}
 
-Write-Verbose "Getting Installed Modules" -Verbose
-Get-InstalledModule
-
-Install-Module -Name Evergreen -Force
-Install-Module -Name PSWindowsUpdate -Force
-
 Import-Module -Name Evergreen
 Import-Module -Name PSWindowsUpdate
 
